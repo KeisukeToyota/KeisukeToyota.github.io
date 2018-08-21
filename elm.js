@@ -7910,64 +7910,94 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$subscriptions = function (model) {
-	return _elm_lang$core$Platform_Sub$none;
-};
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		if (_p0.ctor === 'Expand') {
-			return {ctor: '_Tuple2', _0: true, _1: _elm_lang$core$Platform_Cmd$none};
-		} else {
-			return {ctor: '_Tuple2', _0: false, _1: _elm_lang$core$Platform_Cmd$none};
-		}
+var _user$project$Widget$update = F2(
+	function (message, model) {
+		var _p0 = message;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{count: model.count + 1}),
+			_1: _elm_lang$core$Platform_Cmd$none
+		};
 	});
-var _user$project$Main$init = {ctor: '_Tuple2', _0: false, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$Collapse = {ctor: 'Collapse'};
-var _user$project$Main$Expand = {ctor: 'Expand'};
-var _user$project$Main$view = function (model) {
-	return model ? A2(
+var _user$project$Widget$initialModel = {count: 0};
+var _user$project$Widget$Model = function (a) {
+	return {count: a};
+};
+var _user$project$Widget$Increase = {ctor: 'Increase'};
+var _user$project$Widget$view = function (model) {
+	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$button,
+				_elm_lang$html$Html$div,
+				{ctor: '[]'},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Collapse),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Collapse'),
+					_0: _elm_lang$html$Html$text(
+						_elm_lang$core$Basics$toString(model.count)),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('Widget'),
+				_0: A2(
+					_elm_lang$html$Html$button,
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onClick(_user$project$Widget$Increase),
+						_1: {ctor: '[]'}
+					},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text('Click'),
+						_1: {ctor: '[]'}
+					}),
 				_1: {ctor: '[]'}
 			}
-		}) : A2(
+		});
+};
+
+var _user$project$Main$subscriptions = function (model) {
+	return _elm_lang$core$Platform_Sub$none;
+};
+var _user$project$Main$initialModel = {widgetModel: _user$project$Widget$initialModel};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$AppModel = function (a) {
+	return {widgetModel: a};
+};
+var _user$project$Main$WidgetMsg = function (a) {
+	return {ctor: 'WidgetMsg', _0: a};
+};
+var _user$project$Main$view = function (model) {
+	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
 			_0: A2(
-				_elm_lang$html$Html$button,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$Expand),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('Expand'),
-					_1: {ctor: '[]'}
-				}),
+				_elm_lang$html$Html$map,
+				_user$project$Main$WidgetMsg,
+				_user$project$Widget$view(model.widgetModel)),
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$Main$update = F2(
+	function (message, model) {
+		var _p0 = message;
+		var _p1 = A2(_user$project$Widget$update, _p0._0, model.widgetModel);
+		var updatedWidgetModel = _p1._0;
+		var widgetCmd = _p1._1;
+		return {
+			ctor: '_Tuple2',
+			_0: _elm_lang$core$Native_Utils.update(
+				model,
+				{widgetModel: updatedWidgetModel}),
+			_1: A2(_elm_lang$core$Platform_Cmd$map, _user$project$Main$WidgetMsg, widgetCmd)
+		};
+	});
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{init: _user$project$Main$init, view: _user$project$Main$view, update: _user$project$Main$update, subscriptions: _user$project$Main$subscriptions})();
 

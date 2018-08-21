@@ -1,73 +1,53 @@
 module Main exposing (..)
 
-import Html exposing (Html, button, div, text, program)
-import Html.Events exposing (onClick)
+import Html exposing (Html, program)
+import Widget
 
 
--- モデル
+type alias AppModel =
+    { widgetModel : Widget.Model
+    }
 
 
-type alias Model =
-    Bool
+initialModel : AppModel
+initialModel = 
+    { widgetModel = Widget.initialModel }
 
-
-init : ( Model, Cmd Msg )
+init : ( AppModel, Cmd Msg )
 init =
-    ( False, Cmd.none )
-
-
-
--- メッセージ
+    ( initialModel, Cmd.none )
 
 
 type Msg
-    = Expand
-    | Collapse
+    = WidgetMsg Widget.Msg
 
 
-
--- VIEW
-
-
-view : Model -> Html Msg
+view : AppModel -> Html Msg
 view model =
-    if model then
-        div []
-            [ button [ onClick Collapse ] [ text "Collapse" ]
-            , text "Widget"
-            ]
-    else
-        div []
-            [ button [ onClick Expand ] [ text "Expand" ] ]
+    Html.div []
+        [ Html.map WidgetMsg (Widget.view model.widgetModel)
+        ]
+
+
+update : Msg -> AppModel -> ( AppModel, Cmd Msg )
+update message model =
+    case message of
+        WidgetMsg subMsg ->
+            let
+                ( updatedWidgetModel, widgetCmd ) =
+                    Widget.update subMsg model.widgetModel
+            in
+                ( { model | widgetModel = updatedWidgetModel }, Cmd.map WidgetMsg widgetCmd )
 
 
 
--- 更新
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        Expand ->
-            ( True, Cmd.none )
-
-        Collapse ->
-            ( False, Cmd.none )
-
-
-
--- サブスクリプション(購読)
-
-
-subscriptions : Model -> Sub Msg
+subscriptions : AppModel -> Sub Msg
 subscriptions model =
     Sub.none
 
 
 
--- MAIN
-
-
+main : Program Never AppModel Msg
 main =
     program
         { init = init
